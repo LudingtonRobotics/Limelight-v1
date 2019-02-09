@@ -27,10 +27,10 @@ public class Robot extends TimedRobot {
   NetworkTableEntry tvert = table.getEntry("tvert");
   NetworkTableEntry ts1 = table.getEntry("ts1");
   NetworkTableEntry ts0 = table.getEntry("ts0");
-  
+
 
   Joystick _joystick = new Joystick(0);
-
+  
 
   WPI_TalonSRX _rghtFront = new WPI_TalonSRX(10); // Masters are single digits
   WPI_TalonSRX _rghtFollower = new WPI_TalonSRX(11); // Followers are the same id as the master but with a 0 added
@@ -41,8 +41,6 @@ public class Robot extends TimedRobot {
   DifferentialDrive _diffDrive = new DifferentialDrive(_leftFront, _rghtFront);
   double distance = 0;
   double x = 0;
-
-  Encoder enc = new Encoder(_lift, false, 1); //aaaaaaahhhhh
 
   @Override
   public void robotInit() {
@@ -57,15 +55,15 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
   //read values periodically
-  x = tx.getDouble(0.0);
-  double y = ty.getDouble(0.0);
+  x = tx.getDouble(0.0); //angle from crosshair (-27° to 27°) in the x direction
+  double y = ty.getDouble(0.0); //angle from crosshair (-27° to 27°) in the y direction
   double area = ta.getDouble(0.0);
   double width = thor.getDouble(0.0);
   double height = tvert.getDouble(0.0);
   double skew1 = ts1.getDouble(0.0);
   double skew0 = ts0.getDouble(0.0);
   distance = (272.695621739*5.75/height + 264*14/width)/2;
-  
+
   
 
 
