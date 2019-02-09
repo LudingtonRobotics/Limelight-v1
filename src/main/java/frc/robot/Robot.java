@@ -29,6 +29,7 @@ public class Robot extends TimedRobot {
   NetworkTableEntry ts0 = table.getEntry("ts0");
 
   Joystick _joystick = new Joystick(0);
+  
 
   WPI_TalonSRX _rghtFront = new WPI_TalonSRX(10); // Masters are single digits
   WPI_TalonSRX _rghtFollower = new WPI_TalonSRX(11); // Followers are the same id as the master but with a 0 added
