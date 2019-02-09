@@ -27,6 +27,7 @@ public class Robot extends TimedRobot {
   NetworkTableEntry tvert = table.getEntry("tvert");
   NetworkTableEntry ts1 = table.getEntry("ts1");
   NetworkTableEntry ts0 = table.getEntry("ts0");
+  
 
   Joystick _joystick = new Joystick(0);
 
