@@ -91,7 +91,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    if (distance > 24){
+    if (distance > 12){
       _diffDrive.arcadeDrive(_joystick.getY()/2, _joystick.getZ()/1.5);
     }
     if(_joystick.getRawButton(5)){
@@ -100,7 +100,7 @@ public class Robot extends TimedRobot {
       if (distance <12){
         //drop ball in cargo ship, or put on hatch panel, i'll figure this out later
       }else{
-        _diffDrive.arcadeDrive(0.1*(distance-12), -x/27);
+        _diffDrive.arcadeDrive(0.05*(distance-12), -x/27);
       }
     }else if(_joystick.getRawButton(6)){
       table.getEntry("ledMode").setNumber(1); //LEDs off
