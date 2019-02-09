@@ -8,7 +8,9 @@ public class Encoder implements PIDSource {
 
 	WPI_TalonSRX talon;
 	boolean inv;
-	double multiplier;
+    double multiplier;
+    
+    //double[] hatch
 	
 	public Encoder(WPI_TalonSRX input, boolean invert, double mult) {
 		talon = input;
