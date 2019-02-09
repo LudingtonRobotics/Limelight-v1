@@ -36,7 +36,7 @@ public class Robot extends TimedRobot {
   WPI_TalonSRX _rghtFollower = new WPI_TalonSRX(11); // Followers are the same id as the master but with a 0 added
   WPI_TalonSRX _leftFront = new WPI_TalonSRX(20);
   WPI_TalonSRX _leftFollower = new WPI_TalonSRX(21);
-  WPI_TalonSRX _lift = new WPI_TalonSRX(30);
+  public WPI_TalonSRX _lift = new WPI_TalonSRX(30);
   
   DifferentialDrive _diffDrive = new DifferentialDrive(_leftFront, _rghtFront);
   double distance = 0;
