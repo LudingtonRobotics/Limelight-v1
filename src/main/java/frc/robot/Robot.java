@@ -31,9 +31,9 @@ public class Robot extends TimedRobot {
   Joystick _joystick = new Joystick(0);
 
   WPI_TalonSRX _rghtFront = new WPI_TalonSRX(10); // Masters are single digits
-  WPI_TalonSRX _rghtFollower = new WPI_TalonSRX(11); // Followers are the same id as the master but with a 0 added
+  WPI_TalonSRX _rghtFollo = new WPI_TalonSRX(11); // Follos are the same id as the master but with a 0 added
   WPI_TalonSRX _leftFront = new WPI_TalonSRX(20);
-  WPI_TalonSRX _leftFollower = new WPI_TalonSRX(21);
+  WPI_TalonSRX _leftFollo = new WPI_TalonSRX(21);
   
   DifferentialDrive _diffDrive = new DifferentialDrive(_leftFront, _rghtFront);
   double distance = 0;
@@ -41,12 +41,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    _rghtFront.configFactoryDefault();
-   _rghtFollower.configFactoryDefault();
-   _leftFront.configFactoryDefault();
-   _leftFollower.configFactoryDefault();
-   _rghtFollower.follow(_rghtFront);
-    _leftFollower.follow(_leftFront);
+      _rghtFront.configFactoryDefault();
+      _rghtFollo.configFactoryDefault();
+      _leftFront.configFactoryDefault();
+      _leftFollo.configFactoryDefault();
+      _rghtFollo.follow(_rghtFront);
+      _leftFollo.follow(_leftFront);
   }
 
   @Override
@@ -82,7 +82,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
-    _diffDrive.arcadeDrive(_joystick.getY()/2, _joystick.getZ()/1.5);
+    _diffDrive.arcadeDrive((_joystick.getY()*-1)/2, _joystick.getZ()/1.5);
   }
 
   @Override
