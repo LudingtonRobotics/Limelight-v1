@@ -1,35 +1,57 @@
 package frc.robot;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.Joystick;
+
 public class LiftController {
 
-	WPI_TalonSRX _lift;
-	boolean inv;
-    double multiplier;
-    
+	WPI_TalonSRX _lift = new WPI_TalonSRX(30);
+	Joystick _joy1;
+	double multiplier;
+	
+	// Height for placing the hatch as well as modes to reach those points
     double[] hatchHeight = new double[]{4096, 8192};
     enum hatchStage{
         STAGE1, STAGE2, STAGE3
     }
 
+	// Height for placing the ball as well as modes to reach those points
     double[] ballHeight = new double[]{5000, 7000};
     enum ballStage{
-        STAGE1, STAGE2, STAGE3
+        CARGOSHIP, STAGE1, STAGE2, STAGE3
     }
 
-    enum mode{
+	// Modes to place the hatch and the ball
+    enum Mode{
         HATCH, BALL
-    }
+	}
 	
-	public void invert(boolean in) {
-		inv = in;
+	public LiftController(boolean setInverted, Joystick joy){
+		invert(setInverted);
+		_joy1 = joy;
+	}
+
+	public void run(){
+		
+	}
+
+	// Used to invert the talon direction
+	public void invert(boolean inv) {
+		_lift.setInverted(inv);
 	}
 	
 	public double get() {
 		double distance = _lift.getSelectedSensorPosition(0) * multiplier;
-		distance = inv ? -distance : distance;
         return distance;
-    }
+	}
+	
+	public void autoControl(Mode mode){
+		switch(mode){
+			case HATCH:
+				break;
+			case BALL:
+		}
+	}
     
     public void manualControl(double speed){
 		_lift.set(speed);
