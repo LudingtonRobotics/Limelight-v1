@@ -41,7 +41,7 @@ public class Robot extends TimedRobot {
   double distance = 0;
   double x = 0;
 
-  
+  LiftController _lift = new LiftController();
   
 
 
