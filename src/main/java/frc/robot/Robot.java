@@ -43,6 +43,7 @@ public class Robot extends TimedRobot {
 
   LiftController _lift = new LiftController(false, _joystick);
   
+
   @Override
   public void robotInit() {
     _rghtFront.configFactoryDefault();
