@@ -40,9 +40,8 @@ public class Robot extends TimedRobot {
   DifferentialDrive _diffDrive = new DifferentialDrive(_leftFront, _rghtFront);
   double distance = 0;
   double x = 0;
-  LiftController _lift = new LiftController();
-  
 
+  LiftController _lift = new LiftController(false, _joystick);
 
   @Override
   public void robotInit() {
