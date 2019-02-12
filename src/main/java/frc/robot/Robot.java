@@ -87,6 +87,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
+    _lift.run();
     _diffDrive.arcadeDrive(_joystick.getY()/2, _joystick.getZ()/1.5);
   }
 

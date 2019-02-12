@@ -19,56 +19,42 @@ public class LiftController {
 	PIDController liftPID = new PIDController(P, I, D, enc, _lift);
 	
 	// Height for placing the hatch as well as modes to reach those points
-    double[] hatchHeight = new double[]{4096, 8192};
-    enum hatchStage{
-        STAGE1, STAGE2, STAGE3
-	}
-	hatchStage hatch;
+    double[] hatchHeight = new double[]{4096, 8192, 9000};
 
 	// Height for placing the ball as well as modes to reach those points
-    double[] ballHeight = new double[]{5000, 7000};
-    enum ballStage{
-        CARGOSHIP, STAGE1, STAGE2, STAGE3
-	}
-	ballStage ball;
+    double[] ballHeight = new double[]{5000, 7000, 8000, 9000};
 
-	// Modes to place the hatch and the ball
-    enum Mode{
-        MANUAL, AUTOHATCH, AUTOBALL
-	}
-	Mode mode;
 	
 	public LiftController(boolean setInverted, Joystick joy){
 		invert(setInverted);
 		_joy1 = joy;
 		liftPID.reset();
 		liftPID.setOutputRange(-0.5, 0.5);
-		hatch = null;
-		ball = null;
-		mode = null;
 	}
 
 	public void run(){
-		// Manual control
-		if(_joy1.getRawButton(3) || _joy1.getRawButton(4)){
-			mode = Mode.MANUAL;
-		}else if(_joy1.getRawButton(7) || _joy1.getRawButton(8) || _joy1.getRawButton(9))
-			mode = Mode.AUTOHATCH;
-		else if(_joy1.getRawButton(10)
-		 || _joy1.getRawButton(11) || _joy1.getRawButton(12) || _joy1.getRawButton(13))
-		 	mode = Mode.AUTOBALL;
-
-		 switch(mode){
-			case MANUAL:
-				manualControl();
-				break;
-			case AUTOHATCH:
-				autoHatch();
-				break;
-			case AUTOBALL:
-				autoBall();
-				break;
-		}
+		if(_joy1.getRawButton(3)){
+			_lift.set(.5);
+			liftPID.setSetpoint(_lift.getSelectedSensorPosition(0));
+		}else if(_joy1.getRawButton(4)){
+			_lift.set(-.3);
+			liftPID.setSetpoint(_lift.getSelectedSensorPosition(0));
+		}else if(_joy1.getRawButton(7)){
+			liftPID.setSetpoint(hatchHeight[0]);
+		}else if(_joy1.getRawButton(8)){
+			liftPID.setSetpoint(hatchHeight[1]);
+		}else if(_joy1.getRawButton(9)){
+			liftPID.setSetpoint(hatchHeight[2]);
+		}else if(_joy1.getRawButton(5)){
+			liftPID.setSetpoint(ballHeight[0]);
+		}else if(_joy1.getRawButton(10)){
+			liftPID.setSetpoint(ballHeight[1]);
+		}else if(_joy1.getRawButton(11)){
+			liftPID.setSetpoint(ballHeight[2]);
+		}else if(_joy1.getRawButton(12)){
+			liftPID.setSetpoint(ballHeight[3]);
+		}else
+			liftPID.enable();
 	}
 
 	// Used to invert the talon direction
@@ -76,40 +62,9 @@ public class LiftController {
 		_lift.setInverted(inv);
 	}
 	
-	public double get() {
-		double distance = _lift.getSelectedSensorPosition(0);
-        return distance;
-	}
-
-	public void autoHatch(){
-		if(_joy1.getRawButton(7)
-	}
 	
-	public void autoBall(){
-
-	}
-
-    public void manualControl(){
-		if(_joy1.getRawButton(3)){
-			_lift.set(.5);
-			liftPID.setSetpoint(get());
-		}
-		else if(_joy1.getRawButton(4)){
-			_lift.set(-.3);
-			liftPID.setSetpoint(get());
-		}else
-			liftPID.enable();
-		
-	}
-
 	
 	public void reset() {
-		_lift.getSensorCollection().setPulseWidthPosition(0, 100);
-		_lift.getSensorCollection().setQuadraturePosition(0, 100);
-		_lift.getSensorCollection().setPulseWidthPosition(0, 100);
-		_lift.getSensorCollection().setQuadraturePosition(0, 100);
-		_lift.getSensorCollection().setPulseWidthPosition(0, 100);
-		_lift.getSensorCollection().setQuadraturePosition(0, 100);
 		_lift.getSensorCollection().setPulseWidthPosition(0, 100);
 		_lift.getSensorCollection().setQuadraturePosition(0, 100);
 	}
