@@ -103,11 +103,11 @@ public class Robot extends TimedRobot {
     if(_joystick.getRawButton(5)){
       table.getEntry("ledMode").setNumber(3); //LEDs on
       //NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
-      if (distance <12){
+      /*if (distance <12){
         //drop ball in cargo ship, or put on hatch panel, i'll figure this out later
       }else{
         _diffDrive.arcadeDrive(0.05*(distance-12), -x/27);
-      }
+      }*/
     }else if(_joystick.getRawButton(6)){
       table.getEntry("ledMode").setNumber(1); //LEDs off
       //NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
