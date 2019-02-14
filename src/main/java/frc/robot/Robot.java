@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
@@ -47,6 +48,10 @@ public class Robot extends TimedRobot {
       _leftFollo.configFactoryDefault();
       _rghtFollo.follow(_rghtFront);
       _leftFollo.follow(_leftFront);
+      _rghtFront.setNeutralMode(NeutralMode.Brake);
+      _rghtFollo.setNeutralMode(NeutralMode.Brake);
+      _leftFront.setNeutralMode(NeutralMode.Brake);
+      _leftFollo.setNeutralMode(NeutralMode.Brake);
   }
 
   @Override
@@ -82,7 +87,28 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
-    _diffDrive.arcadeDrive((_joystick.getY()*-1)/2, _joystick.getZ()/1.5);
+    if (distance > 36){
+      _diffDrive.arcadeDrive((_joystick.getY()*-1)/2, _joystick.getZ()/1.5);
+    }else{
+      _diffDrive.arcadeDrive(0,0);
+    }
+    if(_joystick.getRawButton(5)){
+      table.getEntry("ledMode").setNumber(3);//LEDs on
+    }else if(_joystick.getRawButton(6)){
+      table.getEntry("ledMode").setNumber(1); //LEDs off
+      //NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
+    }else if(_joystick.getRawButton(4)){
+      table.getEntry("ledMode").setNumber(2); //LEDs blind everybody that come in their path
+    } 
+      //NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
+      if (distance <12){
+        //drop ball in cargo ship, or put on hatch panel, i'll figure this out later
+      }else{
+        //_diffDrive.arcadeDrive(0.1*(distance-12), -x/27);
+      }
+
+
+
   }
 
   @Override
@@ -91,23 +117,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    if (distance > 24){
-      _diffDrive.arcadeDrive(_joystick.getY()/2, _joystick.getZ()/1.5);
-    }
-    if(_joystick.getRawButton(5)){
-      table.getEntry("ledMode").setNumber(3); //LEDs on
-      //NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
-      if (distance <12){
-        //drop ball in cargo ship, or put on hatch panel, i'll figure this out later
-      }else{
-        _diffDrive.arcadeDrive(0.1*(distance-12), -x/27);
-      }
-    }else if(_joystick.getRawButton(6)){
-      table.getEntry("ledMode").setNumber(1); //LEDs off
-      //NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
-    }else if(_joystick.getRawButton(4)){
-      table.getEntry("ledMode").setNumber(2); //LEDs blind everybody that come in their path
-    }
+     _diffDrive.arcadeDrive((_joystick.getY()*-1)/2, _joystick.getZ()/1.5);
   }
 
   @Override
