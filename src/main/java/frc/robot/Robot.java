@@ -7,10 +7,14 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import java.util.Arrays;
+
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -40,6 +44,13 @@ public class Robot extends TimedRobot {
   double distance = 0;
   double x = 0;
 
+  double incrementDist;
+  int[][] twoDMap = new int[10][11];
+
+
+  ADXRS450_Gyro gyro = new ADXRS450_Gyro();
+
+
   @Override
   public void robotInit() {
       _rghtFront.configFactoryDefault();
@@ -53,6 +64,8 @@ public class Robot extends TimedRobot {
       _leftFront.setNeutralMode(NeutralMode.Brake);
       _leftFollo.setNeutralMode(NeutralMode.Brake);
   }
+
+
 
   @Override
   public void robotPeriodic() {
@@ -80,6 +93,28 @@ public class Robot extends TimedRobot {
   SmartDashboard.putNumber("LimelightSkew1", skew1);
   SmartDashboard.putNumber("LimelightSkew0", skew0);
   }
+  
+  int step = 0;
+  void maper(){
+    switch(step){
+      case 0:
+        incrementDist = distance/10;
+        step = 1;
+        break;
+      case 1:
+    }
+
+  }
+
+
+  double gyroCorrection(){
+    double angle = x;
+    if(angle>0)
+      return 0.3;
+    else if(angle<0)
+      return -0.3;
+    return 0;
+  }
 
   @Override
   public void autonomousInit() {
@@ -87,11 +122,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
-    if (distance > 36){
-      _diffDrive.arcadeDrive((_joystick.getY()*-1)/2, _joystick.getZ()/1.5);
-    }else{
-      _diffDrive.arcadeDrive(0,0);
-    }
+    //_diffDrive.arcadeDrive(0.55, gyroCorrection());
+    System.out.println(Arrays.deepToString(map));
     if(_joystick.getRawButton(5)){
       table.getEntry("ledMode").setNumber(3);//LEDs on
     }else if(_joystick.getRawButton(6)){
@@ -106,15 +138,6 @@ public class Robot extends TimedRobot {
       }else{
         //_diffDrive.arcadeDrive(0.1*(distance-12), -x/27);
       }
-////////////////////////////////////
-
-
-
-
-
-
-
-///
 
   }
 
