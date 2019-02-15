@@ -41,7 +41,7 @@ public class Robot extends TimedRobot {
   double distance = 0;
   double x = 0;
 
-  LiftController _lift = new LiftController(false, _joystick);
+  //LiftController _lift = new LiftController(false, _joystick);
   
 
   @Override
@@ -87,7 +87,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
-    _lift.run();
+    //_lift.run();
     _diffDrive.arcadeDrive(_joystick.getY()/2, _joystick.getZ()/1.5);
   }
 
