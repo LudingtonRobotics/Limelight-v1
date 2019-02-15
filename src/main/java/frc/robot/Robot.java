@@ -2,15 +2,16 @@
 /* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
+/* the project.  Jason                                                             */
 /*----------------------------------------------------------------------------*/
- 
+
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
@@ -28,44 +29,43 @@ public class Robot extends TimedRobot {
   NetworkTableEntry ts1 = table.getEntry("ts1");
   NetworkTableEntry ts0 = table.getEntry("ts0");
 
-
   Joystick _joystick = new Joystick(0);
-  
 
   WPI_TalonSRX _rghtFront = new WPI_TalonSRX(10); // Masters are single digits
-  WPI_TalonSRX _rghtFollower = new WPI_TalonSRX(11); // Followers are the same id as the master but with a 0 added
+  WPI_TalonSRX _rghtFollo = new WPI_TalonSRX(11); // Follos are the same id as the master but with a 0 added
   WPI_TalonSRX _leftFront = new WPI_TalonSRX(20);
-  WPI_TalonSRX _leftFollower = new WPI_TalonSRX(21);
+  WPI_TalonSRX _leftFollo = new WPI_TalonSRX(21);
   
   DifferentialDrive _diffDrive = new DifferentialDrive(_leftFront, _rghtFront);
   double distance = 0;
   double x = 0;
 
-  LiftController _lift = new LiftController(false, _joystick);
-  
-
   @Override
   public void robotInit() {
-    _rghtFront.configFactoryDefault();
-   _rghtFollower.configFactoryDefault();
-   _leftFront.configFactoryDefault();
-   _leftFollower.configFactoryDefault();
-   _rghtFollower.follow(_rghtFront);
-    _leftFollower.follow(_leftFront);
+      _rghtFront.configFactoryDefault();
+      _rghtFollo.configFactoryDefault();
+      _leftFront.configFactoryDefault();
+      _leftFollo.configFactoryDefault();
+      _rghtFollo.follow(_rghtFront);
+      _leftFollo.follow(_leftFront);
+      _rghtFront.setNeutralMode(NeutralMode.Brake);
+      _rghtFollo.setNeutralMode(NeutralMode.Brake);
+      _leftFront.setNeutralMode(NeutralMode.Brake);
+      _leftFollo.setNeutralMode(NeutralMode.Brake);
   }
 
   @Override
   public void robotPeriodic() {
   //read values periodically
-  x = tx.getDouble(0.0); //angle from crosshair (-27° to 27°) in the x direction
-  double y = ty.getDouble(0.0); //angle from crosshair (-27° to 27°) in the y direction
+  x = tx.getDouble(0.0);
+  double y = ty.getDouble(0.0);
   double area = ta.getDouble(0.0);
   double width = thor.getDouble(0.0);
   double height = tvert.getDouble(0.0);
   double skew1 = ts1.getDouble(0.0);
   double skew0 = ts0.getDouble(0.0);
   distance = (272.695621739*5.75/height + 264*14/width)/2;
-
+  
   
 
 
@@ -87,8 +87,28 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
-    _lift.run();
-    _diffDrive.arcadeDrive(_joystick.getY()/2, _joystick.getZ()/1.5);
+    if (distance > 36){
+      _diffDrive.arcadeDrive((_joystick.getY()*-1)/2, _joystick.getZ()/1.5);
+    }else{
+      _diffDrive.arcadeDrive(0,0);
+    }
+    if(_joystick.getRawButton(5)){
+      table.getEntry("ledMode").setNumber(3);//LEDs on
+    }else if(_joystick.getRawButton(6)){
+      table.getEntry("ledMode").setNumber(1); //LEDs off
+      //NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
+    }else if(_joystick.getRawButton(4)){
+      table.getEntry("ledMode").setNumber(2); //LEDs blind everybody that come in their path
+    } 
+      //NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
+      if (distance <12){
+        //drop ball in cargo ship, or put on hatch panel, i'll figure this out later
+      }else{
+        //_diffDrive.arcadeDrive(0.1*(distance-12), -x/27);
+      }
+////////////////////////////////////
+
+
   }
 
   @Override
@@ -97,23 +117,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    if (distance > 12){
-      _diffDrive.arcadeDrive(_joystick.getY()/2, _joystick.getZ()/1.5);
-    }
-    if(_joystick.getRawButton(5)){
-      table.getEntry("ledMode").setNumber(3); //LEDs on
-      //NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
-      /*if (distance <12){
-        //drop ball in cargo ship, or put on hatch panel, i'll figure this out later
-      }else{
-        _diffDrive.arcadeDrive(0.05*(distance-12), -x/27);
-      }*/
-    }else if(_joystick.getRawButton(6)){
-      table.getEntry("ledMode").setNumber(1); //LEDs off
-      //NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
-    }else if(_joystick.getRawButton(4)){
-      table.getEntry("ledMode").setNumber(2); //LEDs blind everybody that come in their path
-    }
+     _diffDrive.arcadeDrive((_joystick.getY()*-1)/2, _joystick.getZ()/1.5);
   }
 
   @Override
