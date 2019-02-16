@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.networktables.NetworkTable;
@@ -28,6 +29,7 @@ public class Robot extends TimedRobot {
   NetworkTableEntry ts1 = table.getEntry("ts1");
   NetworkTableEntry ts0 = table.getEntry("ts0");
   NetworkTableEntry tv = table.getEntry("tv");
+  NetworkTableEntry camTran = table.getEntry("camtran");
 
 
   Joystick _joystick = new Joystick(0);
@@ -47,6 +49,7 @@ public class Robot extends TimedRobot {
   static double minDriveSpeed = 0.3;
   double driveTurn = 0;
   static double minTurnSpeed = 0.5;
+  double[] helpme = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
   //LiftController _lift = new LiftController(false, _joystick);
   
@@ -73,6 +76,7 @@ public class Robot extends TimedRobot {
   double skew0 = ts0.getDouble(0.0);
   isThereATarget = tv.getDouble(0.0);
   distance = (272.695621739*5.75/height + 264*14/width)/2;
+  helpme = camTran.getDoubleArray(helpme);
 
   
 
@@ -87,6 +91,17 @@ public class Robot extends TimedRobot {
   SmartDashboard.putNumber("LimelightDistance",distance);
   SmartDashboard.putNumber("LimelightSkew1", skew1);
   SmartDashboard.putNumber("LimelightSkew0", skew0);
+  //SmartDashboard.putNumberArray("DOES THIS WORK", helpme);
+  SmartDashboard.putNumber("DOES THIS WORK0", helpme[0]);
+  SmartDashboard.putNumber("DOES THIS WORK1", helpme[1]);
+  SmartDashboard.putNumber("DOES THIS WORK2", helpme[2]);
+  SmartDashboard.putNumber("DOES THIS WORK3", helpme[3]);
+  SmartDashboard.putNumber("DOES THIS WORK4", helpme[4]);
+  SmartDashboard.putNumber("DOES THIS WORK5", helpme[5]);
+  
+  //System.out.println(test);
+
+
   }
 
   @Override
@@ -109,8 +124,8 @@ public class Robot extends TimedRobot {
       _diffDrive.arcadeDrive(_joystick.getY()/(-2), _joystick.getZ()/1.5);
     }
     if(_joystick.getRawButton(5)){
-      table.getEntry("ledMode").setNumber(3); //LEDs on
-      //NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
+      //table.getEntry("ledMode").setNumber(3); //LEDs on
+      NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
       if (distance <12){
         _diffDrive.arcadeDrive(-0.3, driveTurn);
         //drop ball in cargo ship, or put on hatch panel, i'll figure this out later
@@ -121,16 +136,17 @@ public class Robot extends TimedRobot {
         } else if(driveSpeed < minDriveSpeed){
           driveSpeed = minDriveSpeed;
         }
-        driveTurn = -x/27;
+        driveTurn = x/27;
         _diffDrive.arcadeDrive(driveSpeed, driveTurn);
       }
     }else if(_joystick.getRawButton(6)){
-      table.getEntry("ledMode").setNumber(1); //LEDs off
-      //NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
+      //table.getEntry("ledMode").setNumber(1); //LEDs off
+      NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
     }else if(_joystick.getRawButton(4)){
       table.getEntry("ledMode").setNumber(2); //LEDs blind everybody that come in their path
-    }else if(_joystick.getRawButton(1)){
-      table.getEntry("ledMode").setNumber(3);
+    }else if(_joystick.getRawButton(3)){
+      //table.getEntry("ledMode").setNumber(3);
+      NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
       //this only turn on LEDs, no driving
     }
   }
