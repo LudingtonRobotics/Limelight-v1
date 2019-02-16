@@ -129,6 +129,9 @@ public class Robot extends TimedRobot {
       //NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
     }else if(_joystick.getRawButton(4)){
       table.getEntry("ledMode").setNumber(2); //LEDs blind everybody that come in their path
+    }else if(_joystick.getRawButton(1)){
+      table.getEntry("ledMode").setNumber(3);
+      //this only turn on LEDs, no driving
     }
   }
 
