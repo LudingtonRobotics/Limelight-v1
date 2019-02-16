@@ -27,6 +27,7 @@ public class Robot extends TimedRobot {
   NetworkTableEntry tvert = table.getEntry("tvert");
   NetworkTableEntry ts1 = table.getEntry("ts1");
   NetworkTableEntry ts0 = table.getEntry("ts0");
+  NetworkTableEntry tv = table.getEntry("tv");
 
 
   Joystick _joystick = new Joystick(0);
@@ -40,6 +41,12 @@ public class Robot extends TimedRobot {
   DifferentialDrive _diffDrive = new DifferentialDrive(_leftFront, _rghtFront);
   double distance = 0;
   double x = 0;
+  double isThereATarget = 0;
+  double driveSpeed = 0;
+  static double maxDriveSpeed = 0.5;
+  static double minDriveSpeed = 0.3;
+  double driveTurn = 0;
+  static double minTurnSpeed = 0.5;
 
   //LiftController _lift = new LiftController(false, _joystick);
   
@@ -64,6 +71,7 @@ public class Robot extends TimedRobot {
   double height = tvert.getDouble(0.0);
   double skew1 = ts1.getDouble(0.0);
   double skew0 = ts0.getDouble(0.0);
+  isThereATarget = tv.getDouble(0.0);
   distance = (272.695621739*5.75/height + 264*14/width)/2;
 
   
@@ -103,11 +111,19 @@ public class Robot extends TimedRobot {
     if(_joystick.getRawButton(5)){
       table.getEntry("ledMode").setNumber(3); //LEDs on
       //NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
-      /*if (distance <12){
+      if (distance <12){
+        _diffDrive.arcadeDrive(-0.3, driveTurn);
         //drop ball in cargo ship, or put on hatch panel, i'll figure this out later
       }else{
-        _diffDrive.arcadeDrive(0.05*(distance-12), -x/27);
-      }*/
+        driveSpeed = 0.05*(distance-12);
+        if (driveSpeed > maxDriveSpeed){
+          driveSpeed = maxDriveSpeed;
+        } else if(driveSpeed < minDriveSpeed){
+          driveSpeed = minDriveSpeed;
+        }
+        driveTurn = -x/27;
+        _diffDrive.arcadeDrive(driveSpeed, driveTurn);
+      }
     }else if(_joystick.getRawButton(6)){
       table.getEntry("ledMode").setNumber(1); //LEDs off
       //NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
