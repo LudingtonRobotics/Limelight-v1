@@ -86,12 +86,7 @@ public class Robot extends TimedRobot {
   //post to smart dashboard periodically
   SmartDashboard.putNumber("LimelightX", x);
   SmartDashboard.putNumber("LimelightY", y);
-  SmartDashboard.putNumber("LimelightArea", area);
-  SmartDashboard.putNumber("LimelightWidth", width);
-  SmartDashboard.putNumber("LimelightHeight", height);
   SmartDashboard.putNumber("LimelightDistance",distance);
-  SmartDashboard.putNumber("LimelightSkew1", skew1);
-  SmartDashboard.putNumber("LimelightSkew0", skew0);
   }
   
   int step = 0;
@@ -110,9 +105,9 @@ public class Robot extends TimedRobot {
   double gyroCorrection(){
     double angle = x;
     if(angle>0)
-      return 0.3;
+      return 0.4;
     else if(angle<0)
-      return -0.3;
+      return -0.4;
     return 0;
   }
 
@@ -122,8 +117,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
-    //_diffDrive.arcadeDrive(0.55, gyroCorrection());
-    System.out.println(Arrays.deepToString(map));
+    _diffDrive.arcadeDrive(0.55, gyroCorrection());
     if(_joystick.getRawButton(5)){
       table.getEntry("ledMode").setNumber(3);//LEDs on
     }else if(_joystick.getRawButton(6)){
