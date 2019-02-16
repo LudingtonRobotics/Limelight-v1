@@ -106,7 +106,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     if (distance > 12){
-      _diffDrive.arcadeDrive(_joystick.getY()/2, _joystick.getZ()/1.5);
+      _diffDrive.arcadeDrive(_joystick.getY()/(-2), _joystick.getZ()/1.5);
     }
     if(_joystick.getRawButton(5)){
       table.getEntry("ledMode").setNumber(3); //LEDs on
