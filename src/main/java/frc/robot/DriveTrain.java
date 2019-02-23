@@ -13,9 +13,7 @@ public class DriveTrain{
     WPI_TalonSRX _leftFollower = new WPI_TalonSRX(21);
   
     DifferentialDrive _diffDrive = new DifferentialDrive(_leftFront, _rghtFront);
-
-
-
+    double exactEncoderValue;
 
     public DriveTrain(){
         _rghtFront.configFactoryDefault();
@@ -27,7 +25,17 @@ public class DriveTrain{
     }
 
     public void run(double x, double z){
-        _diffDrive.arcadeDrive(x, z);
+        _diffDrive.arcadeDrive(-x/2, z/2);
     }
+    
+    public void reset() {
+		_rghtFront.getSensorCollection().setPulseWidthPosition(0, 100);
+		_rghtFront.getSensorCollection().setQuadraturePosition(0, 100);
+	}
 
+    public double get(){
+        exactEncoderValue= _rghtFront.getSelectedSensorPosition(0);
+        double driveDistance = ((exactEncoderValue/4096) * (8*Math.PI));
+        return driveDistance;
+    }
 }

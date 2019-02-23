@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import javax.lang.model.util.ElementScanner6;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
@@ -46,6 +47,7 @@ public class Robot extends TimedRobot {
   double driveTurn = 0;
   static double minTurnSpeed = 0.5;
   double[] helpme = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+  double driveDistance;
 
   //LiftController _lift = new LiftController(false, _joystick);
   
@@ -56,7 +58,10 @@ public class Robot extends TimedRobot {
   double turnAngle;
 
   enum driveModes{
-    DRIVE, GETVAULES, TURN
+    MANUAL, AUTO
+  }
+  enum autoModes{
+    GETVAULES, TURNRIGHTONE, TURNLEFTONE, DRIVE,TURNRIGHTTWO, TURNLEFTTWO
   }
 
 
@@ -67,45 +72,57 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-  //read values periodically
-  x = tx.getDouble(0.0); //angle from crosshair (-27° to 27°) in the x direction
-  double y = ty.getDouble(0.0); //angle from crosshair (-27° to 27°) in the y direction
-  double area = ta.getDouble(0.0);
-  double width = thor.getDouble(0.0);
-  double height = tvert.getDouble(0.0);
-  double skew1 = ts1.getDouble(0.0);
-  double skew0 = ts0.getDouble(0.0);
-  isThereATarget = tv.getDouble(0.0);
-  distance = (272.695621739*5.75/height + 264*14/width)/2;
-  helpme = camTran.getDoubleArray(helpme);
 
+    System.out.println(autoModes);
+    //System.out.println(drive.get());
+    //read values periodically
+    x = tx.getDouble(0.0); //angle from crosshair (-27° to 27°) in the x direction
+    double y = ty.getDouble(0.0); //angle from crosshair (-27° to 27°) in the y direction
+    double area = ta.getDouble(0.0);
+    double width = thor.getDouble(0.0);
+    double height = tvert.getDouble(0.0);
+    double skew1 = ts1.getDouble(0.0);
+    double skew0 = ts0.getDouble(0.0);
+    isThereATarget = tv.getDouble(0.0);
+    distance = (272.695621739*5.75/height + 264*14/width)/2;
+    helpme = camTran.getDoubleArray(helpme);
   
 
 
-  
-  //post to smart dashboard periodically
-  SmartDashboard.putNumber("LimelightX", x);
-  SmartDashboard.putNumber("LimelightY", y);
-  SmartDashboard.putNumber("LimelightArea", area);
-  SmartDashboard.putNumber("LimelightWidth", width);
-  SmartDashboard.putNumber("LimelightHeight", height);
-  SmartDashboard.putNumber("LimelightDistance",distance);
-  SmartDashboard.putNumber("LimelightSkew1", skew1);
-  SmartDashboard.putNumber("LimelightSkew0", skew0);
-  //SmartDashboard.putNumberArray("DOES THIS WORK", helpme);
-  SmartDashboard.putNumber("DOES THIS WORK0", helpme[0]);
-  SmartDashboard.putNumber("DOES THIS WORK1", helpme[1]);
-  SmartDashboard.putNumber("DOES THIS WORK2", helpme[2]);
-  SmartDashboard.putNumber("DOES THIS WORK3", helpme[3]);
-  SmartDashboard.putNumber("DOES THIS WORK4", helpme[4]);
-  SmartDashboard.putNumber("DOES THIS WORK5", helpme[5]);
-  
-  SmartDashboard.putNumber("Gyro", gyro.getAngle());
-  
-  //System.out.println(test);
+    
+
+
+    
+    //post to smart dashboard periodically
+    SmartDashboard.putNumber("LimelightX", x);
+    SmartDashboard.putNumber("LimelightY", y);
+    SmartDashboard.putNumber("LimelightArea", area);
+    SmartDashboard.putNumber("LimelightWidth", width);
+    SmartDashboard.putNumber("LimelightHeight", height);
+    SmartDashboard.putNumber("LimelightDistance",distance);
+    SmartDashboard.putNumber("LimelightSkew1", skew1);
+    SmartDashboard.putNumber("LimelightSkew0", skew0);
+    //SmartDashboard.putNumberArray("DOES THIS WORK", helpme);
+    SmartDashboard.putNumber("x distance", helpme[0]);
+    //SmartDashboard.putNumber("DOES THIS WORK1", helpme[1]);
+    /*
+    SmartDashboard.putNumber("y distanc", helpme[2]);
+    SmartDashboard.putNumber("DOES THIS WORK3", helpme[3]);
+    SmartDashboard.putNumber("DOES THIS WORK4", helpme[4]);
+    SmartDashboard.putNumber("DOES THIS WORK5", helpme[5]);*/
+    
+    SmartDashboard.putNumber("Gyro", gyro.getAngle());
+    
+    //System.out.println(test);
 
 
   }
+
+  @Override
+  public void disabledInit() {
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
+  }
+
 
   @Override
   public void autonomousInit() {
@@ -115,41 +132,67 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
   }
 
-  driveModes mode;
+  driveModes driveModes;
+  autoModes autoModes;
 
   @Override
   public void teleopInit() {
-    mode = driveModes.DRIVE;
+    drive.reset();
+    driveModes = driveModes.MANUAL;
+    autoModes = autoModes.GETVAULES;
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
   }
 
   @Override
   public void teleopPeriodic() {
-
-    System.out.println(gyro.getAngle());
-    switch(mode){
-      case DRIVE:
+    switch(driveModes){
+      case MANUAL:
         drive.run(_joystick.getY(), _joystick.getZ());
-        if(_joystick.getRawButton(5)){
-          NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
-          mode = driveModes.GETVAULES;
-          gyro.reset();
-        }
+        if(_joystick.getRawButton(5))
+          driveModes = driveModes.AUTO;
         break;
-      case GETVAULES:
-        turnAngle = 90 - Math.round(Math.toDegrees(Math.asin(Math.abs(helpme[3])/distance)));
-        System.out.println(turnAngle);
-        if(!(turnAngle==90))
-          mode = driveModes.TURN;
-        break;
-      case TURN:
-        NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
-        if(!(gyro.getAngle()<(turnAngle-5) && gyro.getAngle()>(turnAngle+5)))
-          drive.run(0, .4);
-        else
-          drive.run(0, 0);
-        break;
+      case AUTO:
+        switch(autoModes){
+          case GETVAULES:
+            driveDistance = Math.abs(helpme[1]);
+            if(helpme[3] < 0){
+              turnAngle = 90 - Math.round(Math.toDegrees(Math.asin(Math.abs(helpme[3])/distance)));
+              gyro.reset();
+              autoModes = autoModes.TURNRIGHTONE;
+            }else if(helpme[3] > 0){
+              turnAngle = -(90 - Math.round(Math.toDegrees(Math.asin(Math.abs(helpme[3])/distance))));
+              gyro.reset();
+              autoModes = autoModes.TURNLEFTONE;
+            }
+            break;
+          case TURNRIGHTONE:
+            //NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
+            if(gyro.getAngle() <= turnAngle)
+              drive.run(0, 1);
+            else{
+              gyro.reset();
+              drive.reset();
+              autoModes = autoModes.DRIVE;
+            }
+            break;
+          case TURNLEFTONE:
+            if(gyro.getAngle() >= turnAngle)
+                drive.run(0, -1);
+              else{
+                gyro.reset();
+                drive.reset();
+                autoModes = autoModes.DRIVE;
+              }
+            break;
+          case DRIVE:
+              drive.run(-1, 0);
+              if(drive.get()>=driveDistance)
+                driveModes = driveModes.MANUAL; 
+                autoModes = autoModes.GETVAULES;
+            break;
+          }
+          break;
     }
-       
     /*if(_joystick.getRawButton(5)){
       //table.getEntry("ledMode").setNumber(3); //LEDs on
       NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
@@ -163,8 +206,9 @@ public class Robot extends TimedRobot {
       NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
       //this only turn on LEDs, no driving
     }*/
+  }
+    
 
   }
 
 
-}
