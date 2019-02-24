@@ -118,7 +118,7 @@ public class Robot extends TimedRobot {
 
     
     //post to smart dashboard periodically
-    SmartDashboard.putNumber("LimelightX", x);
+    /*SmartDashboard.putNumber("LimelightX", x);
     SmartDashboard.putNumber("LimelightY", y);
     SmartDashboard.putNumber("LimelightArea", area);
     SmartDashboard.putNumber("LimelightWidth", width);
@@ -186,11 +186,11 @@ public class Robot extends TimedRobot {
           case GETVAULES:
             driveDistance = Math.abs(helpme[1]);
             if(helpme[1] < 0){
-              turnAngle = Math.round(Math.toDegrees(Math.asin(Math.abs(-helpme[3])/distance)));
+              turnAngle = Math.round(Math.toDegrees(Math.asin(Math.abs(helpme[3])/distance)));
               gyro.reset();
               autoModes = autoModes.TURNRIGHTONE;
             }else if(helpme[1] > 0){
-              turnAngle = -(Math.round(Math.toDegrees(Math.asin(Math.abs(-helpme[3])/distance))));
+              turnAngle = -(Math.round(Math.toDegrees(Math.asin(Math.abs(helpme[3])/distance))));
               gyro.reset();
               autoModes = autoModes.TURNLEFTONE;
             }
