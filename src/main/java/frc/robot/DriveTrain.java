@@ -17,11 +17,11 @@ public class DriveTrain{
 
     public DriveTrain(){
         _rghtFront.configFactoryDefault();
-   _rghtFollower.configFactoryDefault();
-   _leftFront.configFactoryDefault();
-   _leftFollower.configFactoryDefault();
-   _rghtFollower.follow(_rghtFront);
-    _leftFollower.follow(_leftFront);
+        _rghtFollower.configFactoryDefault();
+        _leftFront.configFactoryDefault();
+        _leftFollower.configFactoryDefault();
+        _rghtFollower.follow(_rghtFront);
+        _leftFollower.follow(_leftFront);
     }
 
     public void run(double x, double z){

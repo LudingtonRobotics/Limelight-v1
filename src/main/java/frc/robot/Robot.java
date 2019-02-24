@@ -30,6 +30,7 @@ public class Robot extends TimedRobot {
   NetworkTableEntry tvert = table.getEntry("tvert");
   NetworkTableEntry ts1 = table.getEntry("ts1");
   NetworkTableEntry ts0 = table.getEntry("ts0");
+  NetworkTableEntry ts = table.getEntry("ts");
   NetworkTableEntry tv = table.getEntry("tv");
   NetworkTableEntry camTran = table.getEntry("camtran");
 
@@ -48,6 +49,8 @@ public class Robot extends TimedRobot {
   static double minTurnSpeed = 0.5;
   double[] helpme = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
   double driveDistance;
+  double pleaseLetThisDistanceBeTheRightThing;
+  double theAngleThatIREALLYNeed;
 
   //LiftController _lift = new LiftController(false, _joystick);
   
@@ -83,8 +86,29 @@ public class Robot extends TimedRobot {
     double height = tvert.getDouble(0.0);
     double skew1 = ts1.getDouble(0.0);
     double skew0 = ts0.getDouble(0.0);
+    double actualSkew = ts.getDouble(0.0);
     isThereATarget = tv.getDouble(0.0);
-    distance = (272.695621739*5.75/height + 264*14/width)/2;
+    if (height > 0 && width > 0){
+      distance = (741.913*5.75/height + 806.929*14/width)/2;
+      theAngleThatIREALLYNeed = Math.acos(26/distance);
+      //pleaseLetThisDistanceBeTheRightThing = Math.pow((distance*distance - 23*23),1/2);
+      pleaseLetThisDistanceBeTheRightThing = distance*Math.sin(theAngleThatIREALLYNeed);
+
+    }else if(height > 0){
+      distance = (741.913*5.75/height);
+      theAngleThatIREALLYNeed = Math.acos(26/distance);
+      //pleaseLetThisDistanceBeTheRightThing = Math.pow((distance*distance - 23*23),1/2);
+      pleaseLetThisDistanceBeTheRightThing = distance*Math.sin(theAngleThatIREALLYNeed);
+    }else if(width > 0){
+      distance = (806.929*14/width);
+      theAngleThatIREALLYNeed = Math.acos(26/distance);
+      //pleaseLetThisDistanceBeTheRightThing = Math.pow((distance*distance - 23*23),1/2);
+      pleaseLetThisDistanceBeTheRightThing = distance*Math.sin(theAngleThatIREALLYNeed);
+    }else{
+      distance = 0.0;
+      theAngleThatIREALLYNeed = 0.0;
+      pleaseLetThisDistanceBeTheRightThing = 0.0;
+    }
     helpme = camTran.getDoubleArray(helpme);
   
 
@@ -102,8 +126,11 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("LimelightDistance",distance);
     SmartDashboard.putNumber("LimelightSkew1", skew1);
     SmartDashboard.putNumber("LimelightSkew0", skew0);
+    SmartDashboard.putNumber("RealLimelightSkew", actualSkew);
+    SmartDashboard.putNumber("TheREALDistance", pleaseLetThisDistanceBeTheRightThing);
     //SmartDashboard.putNumberArray("DOES THIS WORK", helpme);
     SmartDashboard.putNumber("x distance", helpme[0]);
+    SmartDashboard.putNumber("turnAngle", turnAngle);
     //SmartDashboard.putNumber("DOES THIS WORK1", helpme[1]);
     /*
     SmartDashboard.putNumber("y distanc", helpme[2]);
@@ -145,6 +172,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    if(_joystick.getRawButton(3)){
+      NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
+    }
     switch(driveModes){
       case MANUAL:
         drive.run(_joystick.getY(), _joystick.getZ());
@@ -155,12 +185,12 @@ public class Robot extends TimedRobot {
         switch(autoModes){
           case GETVAULES:
             driveDistance = Math.abs(helpme[1]);
-            if(helpme[3] < 0){
-              turnAngle = 90 - Math.round(Math.toDegrees(Math.asin(Math.abs(helpme[3])/distance)));
+            if(helpme[1] < 0){
+              turnAngle = Math.round(Math.toDegrees(Math.asin(Math.abs(-helpme[3])/distance)));
               gyro.reset();
               autoModes = autoModes.TURNRIGHTONE;
-            }else if(helpme[3] > 0){
-              turnAngle = -(90 - Math.round(Math.toDegrees(Math.asin(Math.abs(helpme[3])/distance))));
+            }else if(helpme[1] > 0){
+              turnAngle = -(Math.round(Math.toDegrees(Math.asin(Math.abs(-helpme[3])/distance))));
               gyro.reset();
               autoModes = autoModes.TURNLEFTONE;
             }
