@@ -73,7 +73,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
 
-    System.out.println(autoModes);
+    //System.out.println(autoModes);
     //System.out.println(drive.get());
     //read values periodically
     x = tx.getDouble(0.0); //angle from crosshair (-27° to 27°) in the x direction
@@ -157,10 +157,14 @@ public class Robot extends TimedRobot {
             driveDistance = Math.abs(helpme[1]);
             if(helpme[3] < 0){
               turnAngle = 90 - Math.round(Math.toDegrees(Math.asin(Math.abs(helpme[3])/distance)));
+              System.out.println(Math.round(Math.toDegrees(Math.asin(Math.abs(helpme[3])/distance))));
+              System.out.println(turnAngle);
               gyro.reset();
               autoModes = autoModes.TURNRIGHTONE;
             }else if(helpme[3] > 0){
               turnAngle = -(90 - Math.round(Math.toDegrees(Math.asin(Math.abs(helpme[3])/distance))));
+              System.out.println(Math.round(Math.toDegrees(Math.asin(Math.abs(helpme[3])/distance))));
+              System.out.println(turnAngle);
               gyro.reset();
               autoModes = autoModes.TURNLEFTONE;
             }
@@ -170,6 +174,7 @@ public class Robot extends TimedRobot {
             if(gyro.getAngle() <= turnAngle)
               drive.run(0, 1);
             else{
+              System.out.println(gyro.getAngle());
               gyro.reset();
               drive.reset();
               autoModes = autoModes.DRIVE;
@@ -179,36 +184,25 @@ public class Robot extends TimedRobot {
             if(gyro.getAngle() >= turnAngle)
                 drive.run(0, -1);
               else{
+                System.out.println(gyro.getAngle());
                 gyro.reset();
                 drive.reset();
                 autoModes = autoModes.DRIVE;
               }
             break;
-          case DRIVE:
+          
+          }
+          break;
+        }
+    
+  }
+    
+
+}
+/*case DRIVE:
               drive.run(-1, 0);
               if(drive.get()>=driveDistance)
                 driveModes = driveModes.MANUAL; 
                 autoModes = autoModes.GETVAULES;
-            break;
-          }
-          break;
-    }
-    /*if(_joystick.getRawButton(5)){
-      //table.getEntry("ledMode").setNumber(3); //LEDs on
-      NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
-      }else if(_joystick.getRawButton(6)){
-      //table.getEntry("ledMode").setNumber(1); //LEDs off
-      NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
-    }else if(_joystick.getRawButton(4)){
-      table.getEntry("ledMode").setNumber(2); //LEDs blind everybody that come in their path
-    }else if(_joystick.getRawButton(3)){
-      //table.getEntry("ledMode").setNumber(3);
-      NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
-      //this only turn on LEDs, no driving
-    }*/
-  }
-    
-
-  }
-
+            break;*/
 
