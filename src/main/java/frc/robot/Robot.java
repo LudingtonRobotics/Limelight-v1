@@ -94,7 +94,7 @@ public class Robot extends TimedRobot {
 
     }else if(height > 0){
       angledDistanceFromCamera = (741.913*5.75/height);
-      cameraAngle = Math.acos(26/angledDistanceFromCamera);
+      cameraAngle = Math.acos(26/*distance in inches from camera to the level of tape*//angledDistanceFromCamera);
       //distance = Math.pow((angledDistanceFromCamera*angledDistanceFromCamera - 23*23),1/2);
       distance = angledDistanceFromCamera*Math.sin(cameraAngle);
     }else if(width > 0){
@@ -161,63 +161,11 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     drive.reset();
-    driveModes = driveModes.MANUAL;
-    autoModes = autoModes.GETVAULES;
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
   }
 
   @Override
   public void teleopPeriodic() {
-    switch(driveModes){
-      case MANUAL:
-        drive.run(_joystick.getY(), _joystick.getZ());
-        if(_joystick.getRawButton(5))
-          driveModes = driveModes.AUTO;
-        break;
-      case AUTO:
-        switch(autoModes){
-          case GETVAULES:
-            driveDistance = Math.abs(helpme[1]);
-            if(helpme[3] < 0){
-              turnAngle = 90 - Math.round(Math.toDegrees(Math.asin(Math.abs(helpme[3])/distance)));
-              System.out.println(Math.round(Math.toDegrees(Math.asin(Math.abs(helpme[3])/distance))));
-              System.out.println(turnAngle);
-              gyro.reset();
-              autoModes = autoModes.TURNRIGHTONE;
-            }else if(helpme[3] > 0){
-              turnAngle = -(90 - Math.round(Math.toDegrees(Math.asin(Math.abs(helpme[3])/distance))));
-              System.out.println(Math.round(Math.toDegrees(Math.asin(Math.abs(helpme[3])/distance))));
-              System.out.println(turnAngle);
-              gyro.reset();
-              autoModes = autoModes.TURNLEFTONE;
-            }
-            break;
-          case TURNRIGHTONE:
-            //NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
-            if(gyro.getAngle() <= turnAngle)
-              drive.run(0, 1);
-            else{
-              System.out.println(gyro.getAngle());
-              gyro.reset();
-              drive.reset();
-              autoModes = autoModes.DRIVE;
-            }
-            break;
-          case TURNLEFTONE:
-            if(gyro.getAngle() >= turnAngle)
-                drive.run(0, -1);
-              else{
-                System.out.println(gyro.getAngle());
-                gyro.reset();
-                drive.reset();
-                autoModes = autoModes.DRIVE;
-              }
-            break;
-          
-          }
-          break;
-        }
-    
   }
     
 
