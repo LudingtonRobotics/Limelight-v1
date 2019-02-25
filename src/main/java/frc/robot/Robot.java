@@ -38,7 +38,7 @@ public class Robot extends TimedRobot {
   
 
 
-  double distance = 0;
+  double angledDistanceFromCamera = 0;
   double x = 0;
   double isThereATarget = 0;
   double driveSpeed = 0;
@@ -48,6 +48,8 @@ public class Robot extends TimedRobot {
   static double minTurnSpeed = 0.5;
   double[] helpme = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
   double driveDistance;
+  double cameraAngle;
+  double distance;
 
   //LiftController _lift = new LiftController(false, _joystick);
   
@@ -84,7 +86,27 @@ public class Robot extends TimedRobot {
     double skew1 = ts1.getDouble(0.0);
     double skew0 = ts0.getDouble(0.0);
     isThereATarget = tv.getDouble(0.0);
-    distance = (272.695621739*5.75/height + 264*14/width)/2;
+    if (height > 0 && width > 0){
+      angledDistanceFromCamera = (741.913*5.75/height + 806.929*14/width)/2;
+      cameraAngle = Math.acos(26/angledDistanceFromCamera);
+      //distance = Math.pow((angledDistanceFromCamera*angledDistanceFromCamera - 23*23),1/2);
+      distance = angledDistanceFromCamera*Math.sin(cameraAngle);
+
+    }else if(height > 0){
+      angledDistanceFromCamera = (741.913*5.75/height);
+      cameraAngle = Math.acos(26/angledDistanceFromCamera);
+      //distance = Math.pow((angledDistanceFromCamera*angledDistanceFromCamera - 23*23),1/2);
+      distance = angledDistanceFromCamera*Math.sin(cameraAngle);
+    }else if(width > 0){
+      angledDistanceFromCamera = (806.929*14/width);
+      cameraAngle = Math.acos(26/angledDistanceFromCamera);
+      //distance = Math.pow((angledDistanceFromCamera*angledDistanceFromCamera - 23*23),1/2);
+      distance = angledDistanceFromCamera*Math.sin(cameraAngle);
+    }else{
+      angledDistanceFromCamera = 0.0;
+      cameraAngle = 0.0;
+      distance = 0.0;
+    }
     helpme = camTran.getDoubleArray(helpme);
   
 
@@ -99,7 +121,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("LimelightArea", area);
     SmartDashboard.putNumber("LimelightWidth", width);
     SmartDashboard.putNumber("LimelightHeight", height);
-    SmartDashboard.putNumber("LimelightDistance",distance);
+    SmartDashboard.putNumber("AngledLimelightDistance",angledDistanceFromCamera);
+    SmartDashboard.putNumber("ActualLimelightDistance", distance);
     SmartDashboard.putNumber("LimelightSkew1", skew1);
     SmartDashboard.putNumber("LimelightSkew0", skew0);
     //SmartDashboard.putNumberArray("DOES THIS WORK", helpme);
