@@ -2,7 +2,6 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 public class DriveTrain{
@@ -17,11 +16,11 @@ public class DriveTrain{
 
     public DriveTrain(){
         _rghtFront.configFactoryDefault();
-   _rghtFollower.configFactoryDefault();
-   _leftFront.configFactoryDefault();
-   _leftFollower.configFactoryDefault();
-   _rghtFollower.follow(_rghtFront);
-    _leftFollower.follow(_leftFront);
+        _rghtFollower.configFactoryDefault();
+        _leftFront.configFactoryDefault();
+        _leftFollower.configFactoryDefault();
+        _rghtFollower.follow(_rghtFront);
+        _leftFollower.follow(_leftFront);
     }
 
     public void run(double x, double z){
@@ -34,7 +33,7 @@ public class DriveTrain{
 	}
 
     public double get(){
-        exactEncoderValue= _rghtFront.getSelectedSensorPosition(0);
+        exactEncoderValue = _rghtFront.getSelectedSensorPosition(0);
         double driveDistance = ((exactEncoderValue/4096) * (8*Math.PI));
         return driveDistance;
     }
