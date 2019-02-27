@@ -10,12 +10,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import javax.lang.model.util.ElementScanner6;
-
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -46,7 +41,7 @@ public class Robot extends TimedRobot {
   static double minDriveSpeed = 0.3;
   double driveTurn = 0;
   static double minTurnSpeed = 0.5;
-  double[] helpme = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+  double[] limelightSolvePNPStuff = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
   double driveDistance;
   double cameraAngle;
   double distance;
@@ -59,13 +54,15 @@ public class Robot extends TimedRobot {
 
   double turnAngle;
 
+  double distanceToDrive = 0;
+
   enum driveModes{
     MANUAL, AUTO
   }
-  enum autoModes{
-    GETVAULES, TURNRIGHTONE, TURNLEFTONE, DRIVE,TURNRIGHTTWO, TURNLEFTTWO
-  }
 
+  enum autoModes{
+    GETVALUES, DRIVE, WAITFORINPUT
+  }
 
   @Override
   public void robotInit() {
@@ -107,13 +104,7 @@ public class Robot extends TimedRobot {
       cameraAngle = 0.0;
       distance = 0.0;
     }
-    helpme = camTran.getDoubleArray(helpme);
-  
-
-
-    
-
-
+    limelightSolvePNPStuff = camTran.getDoubleArray(limelightSolvePNPStuff);
     
     //post to smart dashboard periodically
     SmartDashboard.putNumber("LimelightX", x);
@@ -125,19 +116,18 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("ActualLimelightDistance", distance);
     SmartDashboard.putNumber("LimelightSkew1", skew1);
     SmartDashboard.putNumber("LimelightSkew0", skew0);
-    //SmartDashboard.putNumberArray("DOES THIS WORK", helpme);
-    SmartDashboard.putNumber("x distance", helpme[0]);
-    //SmartDashboard.putNumber("DOES THIS WORK1", helpme[1]);
+    //SmartDashboard.putNumberArray("DOES THIS WORK", limelightSolvePNPStuff);
+    SmartDashboard.putNumber("x distance", limelightSolvePNPStuff[0]);
+    //SmartDashboard.putNumber("DOES THIS WORK1", limelightSolvePNPStuff[1]);
     /*
-    SmartDashboard.putNumber("y distanc", helpme[2]);
-    SmartDashboard.putNumber("DOES THIS WORK3", helpme[3]);
-    SmartDashboard.putNumber("DOES THIS WORK4", helpme[4]);
-    SmartDashboard.putNumber("DOES THIS WORK5", helpme[5]);*/
+    SmartDashboard.putNumber("y distanc", limelightSolvePNPStuff[2]);
+    SmartDashboard.putNumber("DOES THIS WORK3", limelightSolvePNPStuff[3]);
+    SmartDashboard.putNumber("DOES THIS WORK4", limelightSolvePNPStuff[4]);
+    SmartDashboard.putNumber("DOES THIS WORK5", limelightSolvePNPStuff[5]);*/
     
     SmartDashboard.putNumber("Gyro", gyro.getAngle());
     
     //System.out.println(test);
-
 
   }
 
@@ -162,18 +152,34 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     drive.reset();
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
+    driveModes = driveModes.MANUAL;
+    autoModes = autoModes.GETVALUES;
   }
 
   @Override
   public void teleopPeriodic() {
+    switch(driveModes){
+      case MANUAL:
+        drive.run(_joystick.getY(), _joystick.getZ());
+        
+        break;
+      case AUTO:
+        switch(autoModes){
+          case GETVALUES:
+
+            break;
+          case DRIVE:
+
+            break;
+          case WAITFORINPUT:
+            
+            break;
+        }
+        break;
+    }
+    
   }
     
 
 }
-/*case DRIVE:
-              drive.run(-1, 0);
-              if(drive.get()>=driveDistance)
-                driveModes = driveModes.MANUAL; 
-                autoModes = autoModes.GETVAULES;
-            break;*/
 
